@@ -9,6 +9,7 @@ from twitchio import authentication, eventsub
 from twitchio.ext import commands
 
 from config import TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, TWITCH_BOT_ID, TWITCH_USER_ID
+from osu_api import sendMessage
 
 
 CLIENT_ID = TWITCH_CLIENT_ID
@@ -66,6 +67,15 @@ class OsuComponent(commands.Component):
         !hi
         """
         await ctx.reply(f"Hi {ctx.chatter}!")
+
+    @commands.command()
+    async def sr(self, ctx: commands.Context, message: str) -> None:
+        """
+        Command to send beatmap link to user and acknowledge it in chat
+        !sr <beatmap_link>
+        """
+        await sendMessage(message)
+        await ctx.reply(f"Beatmap link has been sent.")
 
 
 
