@@ -1,0 +1,14 @@
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OSU_CLIENT_ID = os.getenv("OSU_CLIENT_ID")
+OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
+OSU_CALLBACK_URL = os.getenv("OSU_CALLBACK_URL")
+OSU_IRC_PASSWORD= os.getenv("OSU_IRC_PASSWORD")
+OSU_IRC_NICK= os.getenv("OSU_IRC_NICK")
+TWITCH_CLIENT_ID = os.getenv("TWITCH_CLIENT_ID")
+TWITCH_CLIENT_SECRET = os.getenv("TWITCH_CLIENT_SECRET")
+TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID")
+TWITCH_USER_ID = os.getenv("TWITCH_USER_ID")
