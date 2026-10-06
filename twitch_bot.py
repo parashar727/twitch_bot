@@ -5,11 +5,11 @@ import random
 from typing import Any
 
 import twitchio
-from twitchio import authentication, eventsub
+from twitchio import HTTPException, MessageRejectedError, authentication, eventsub
 from twitchio.ext import commands
 
 from config import TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, TWITCH_BOT_ID, TWITCH_USER_ID
-from osu_api import sendMessage
+from osu_api import sendMessage, validate_beatmap_url
 
 
 CLIENT_ID = TWITCH_CLIENT_ID
@@ -40,8 +40,6 @@ class Bot(commands.AutoBot):
         LOGGER.info("Logged in as: %s", self.user)
 
     async def event_oauth_authorized(self, payload: authentication.UserTokenPayload) -> None:
-        # Stores tokens in .tio.tokens.json by default; can be overriden to use a DB for example
-        # Adds the token to our Client to make requests and subscribe to EventSub...
         await self.add_token(payload.access_token, payload.refresh_token)
 
         if not payload.user_id:
@@ -74,8 +72,16 @@ class OsuComponent(commands.Component):
         Command to send beatmap link to user and acknowledge it in chat
         !sr <beatmap_link>
         """
-        await sendMessage(message)
-        await ctx.reply(f"Beatmap link has been sent.")
+        if validate_beatmap_url(message):
+            try:
+                await sendMessage(message)
+                await ctx.reply(f"Beatmap link has been sent.")
+            except (HTTPException, MessageRejectedError) as e:
+                LOGGER.error("Twitch error: Failed to send message to Twitch chat: %s", e)
+            except Exception as e:
+                LOGGER.error("osu error: Failed to send message to osu user: %s", e)
+        else:
+            await ctx.reply(f"Invalid beatmap link. Check map gamemode (osu) or valid beatmap id.")
 
 
 
